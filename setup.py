@@ -1,11 +1,14 @@
 from setuptools import setup, find_packages
+from gitversion import rewritable_git_version
+
+__VERSION__ = rewritable_git_version(__file__)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="PyBetterGitUp",
-    version="0.5.4",
+    version=__VERSION__,
     packages=find_packages(exclude=["tests"]),
     scripts=['PyBetterGitUp/bgitup.py'],
     install_requires=[
