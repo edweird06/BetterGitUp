@@ -65,7 +65,7 @@ class BGitUp():
             branchPlural = "" if missbranchesLength == 1 else "es"
             thisPlural = "this" if missbranchesLength == 1 else "these"
             warn("\nBranch" + branchPlural +
-                 " found that no longer exist on the emote")
+                 " found that no longer exist on the remote")
             for i in range(missbranchesLength):
                 warn(f"\t{self.missingRemoteBranches[i].name}")
 
