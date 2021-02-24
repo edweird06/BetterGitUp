@@ -25,20 +25,36 @@ def update(msg):
     print(f"{bcolors.OKGREEN}{msg}{bcolors.ENDC}")
 
 
-def yes_or_no(question):
-    reply = str(input(question+' (y/n): ')).lower().strip()
-    if reply[0] == 'y':
-        return True
-    if reply[0] == 'n':
-        return False
-    else:
-        return yes_or_no("Uhhhh... please enter ")
-
-
 class BGitUp():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     remoteDoesNotExist = "remote branch doesn't exist"
     missingRemoteBranches = []
+
+    def parse_csv(self):
+        reply = str(input(
+            'Enter a comma seprated list of branch numbers that you want to keep: ')).lower().strip()
+        values = [int(x.strip()) for x in reply.split(',')]
+        for i in range(len(values)):
+            self.missingRemoteBranches.pop(values[0] - 1)
+
+        warn(
+            f"\nUpdate list of branches to remove")
+        for i in range(len(self.missingRemoteBranches)):
+            warn(f"\t{i + 1}: {self.missingRemoteBranches[i].name}")
+
+    def yes_or_no(self, question):
+        reply = str(input(
+            question+' (y/n) or (e) to edit the list: ')).lower().strip()
+        if reply[0] == 'y':
+            return True
+        if reply[0] == 'n':
+            return False
+        if reply[0] == 'e':
+            self.parse_csv()
+            # make sure that is it wanted and that the list is not empty
+            return ((len(self.missingRemoteBranches) > 0) and self.yes_or_no(question))
+        else:
+            return self.yes_or_no("Uhhhh... please enter ")
 
     def __init__(self):
         try:
@@ -64,18 +80,17 @@ class BGitUp():
         if missbranchesLength > 0:
             branchPlural = "" if missbranchesLength == 1 else "es"
             thisPlural = "this" if missbranchesLength == 1 else "these"
-            warn("\nBranch" + branchPlural +
-                 " found that no longer exist on the remote")
+            warn(
+                f"\nBranch{branchPlural} found that no longer exist on the remote")
             for i in range(missbranchesLength):
-                warn(f"\t{self.missingRemoteBranches[i].name}")
+                warn(f"\t{i + 1}: {self.missingRemoteBranches[i].name}")
 
-            if yes_or_no(f"Would you like to remove {thisPlural} branch{branchPlural}?"):
+            if (self.yes_or_no(f"Would you like to remove {thisPlural} branch{branchPlural}?") and (len(self.missingRemoteBranches) > 0)):
                 # loop over each branch and delete it locally
-                repo = git.Repo(self.dir_path, search_parent_directories=True)
                 for i in range(len(self.missingRemoteBranches)):
                     update(f"\t deleting {self.missingRemoteBranches[i].name}")
                     git.Head.delete(
-                        repo, self.missingRemoteBranches[i].name, force=True)
+                        self.gitUp.repo, self.missingRemoteBranches[i].name, force=True)
 
 
 def run():

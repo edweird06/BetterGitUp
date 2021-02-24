@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
-from gitversion import rewritable_git_version
-
-__VERSION__ = rewritable_git_version(__file__)
+from PyBetterGitUp.version import __VERSION__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -15,6 +13,7 @@ setup(
         'GitPython==3.1.7',
         'git-up==1.6.1',
         'colorama>=0.4.3',
+        'gitversion==2.1.3'
     ],
 
     # Executable
